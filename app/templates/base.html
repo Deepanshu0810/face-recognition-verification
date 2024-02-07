@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static',filename='styles/style.css')}}">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/face-recognition">Face Recognition</a></li>
+            <li><a href="/face-verification">Face Verification</a></li>
+            <li><a href="/live">Live</a></li>
+        </ul>
+    </nav>
+    {% block content %}{% endblock %}
+
+    <script src="{{url_for('static',filename='js/main.js')}}"></script>
+</body>
+</html>

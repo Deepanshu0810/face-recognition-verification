@@ -1,0 +1,17 @@
+ipykernel
+tensorflow-directml-plugin
+opencv-python
+pandas
+numpy
+matplotlib
+tqdm
+glob2
+SciPy
+scikit-learn
+Flask
+mtcnn
+"uvicorn[standard]"
+fastapi
+cryptography
+scikit-image
+huggingface_hub
