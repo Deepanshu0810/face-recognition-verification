@@ -1,3 +1,7 @@
 venv/
 data/
 model/
+*.docx
+*.svg
+*.tmp
+presentation/

@@ -1,13 +1,18 @@
 from .model import InceptionResNetV2
 from scipy.spatial.distance import cosine
 from sklearn.preprocessing import Normalizer
-from app.constants import *
 import mtcnn
 import os
 from glob import glob
 import pickle
 import cv2
 import numpy as np
+from pathlib import Path
+
+DATA_DIR = Path('data/105_classes_pins_dataset')
+VAL_DIR = Path('data/validation')
+ENCODINGS_PATH = Path('model/encodings_updated.pkl')
+WEIGHTS_PATH = Path('model/keras-facenet/weights/facenet_keras_weights.h5')
 
 cwd = os.getcwd()
 
@@ -52,6 +57,10 @@ class FacenetModel:
         with open(self.encodings_path, 'rb') as f:
             encoding_dict = pickle.load(f)
         return encoding_dict
+    
+    def save_pickle(self):
+        with open(self.encodings_path, 'wb') as f:
+            pickle.dump(self.encoding_dict, f)
     
     def train(self):
         for person in os.listdir(self.face_data):
@@ -234,3 +243,44 @@ class FacenetModel:
                     b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
             
         cap.release()
+
+    def train_new(self,face_data):
+        for person in os.listdir(face_data):
+            name = person
+
+            if name in self.encoding_dict.keys():
+                continue
+
+            person_dir = os.path.join(face_data,person)
+            filepaths = os.listdir(person_dir)
+            encodes = []
+
+            for image_name in filepaths:
+                image_path = os.path.join(person_dir,image_name)
+
+                img_BGR = cv2.imread(image_path)
+                img_RGB = cv2.cvtColor(img_BGR, cv2.COLOR_BGR2RGB)
+
+                x = self.face_detector.detect_faces(img_RGB)
+                if len(x) > 0:
+                    x1, y1, width, height = x[0]['box']
+                    x1, y1 = abs(x1) , abs(y1)
+                    x2, y2 = x1+width , y1+height
+                    face = img_RGB[y1:y2 , x1:x2]
+                else:
+                    face = img_RGB
+
+                face = self.normalize(face)
+                face = cv2.resize(face, self.required_shape)
+                face_d = np.expand_dims(face, axis=0)
+                encode = self.face_encoder.predict(face_d)[0]
+                encodes.append(encode)
+        
+        if encodes:
+            encode = np.sum(encodes, axis=0 )
+            encode = self.l2_normalizer.transform(np.expand_dims(encode, axis=0))[0]
+            self.encoding_dict[name] = encode
+
+        with open(self.encodings_path, 'wb') as f:
+            pickle.dump(self.encoding_dict, f)
+    

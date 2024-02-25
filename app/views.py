@@ -18,8 +18,8 @@ def face_recognition():
         img = request.files['image']
         print(img)
         if(img):
-            img.save(os.path.join(os.getcwd(),'data','test',img.filename))
-            img_array,name,dis = model.recognize(os.path.join(os.getcwd(),'data','test',img.filename))
+            img.save(os.path.join(os.getcwd(),'app','static','input',img.filename))
+            img_array,name,dis = model.recognize(os.path.join(os.getcwd(),'app','static','input',img.filename))
             cv.imwrite(os.path.join(os.getcwd(),'app','static','results',img.filename),img_array)
             context = {
                 'name':name,
@@ -39,9 +39,9 @@ def face_verification():
         img1 = request.files['image1']
         img2 = request.files['image2']
         if(img1 and img2):
-            img1.save(os.path.join(os.getcwd(),'data','test',img1.filename))
-            img2.save(os.path.join(os.getcwd(),'data','test',img2.filename))
-            img1_arr, img2_arr = model.verify(os.path.join(os.getcwd(),'data','test',img1.filename),os.path.join(os.getcwd(),'data','test',img2.filename))
+            img1.save(os.path.join(os.getcwd(),'app','static','input',img1.filename))
+            img2.save(os.path.join(os.getcwd(),'app','static','input',img2.filename))
+            img1_arr, img2_arr = model.verify(os.path.join(os.getcwd(),'app','static','input',img1.filename),os.path.join(os.getcwd(),'app','static','input',img2.filename))
             cv.imwrite(os.path.join(os.getcwd(),'app','static','results',img1.filename),img1_arr)
             cv.imwrite(os.path.join(os.getcwd(),'app','static','results',img2.filename),img2_arr)
             context = {
